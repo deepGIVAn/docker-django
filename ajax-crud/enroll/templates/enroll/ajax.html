@@ -1,0 +1,125 @@
+<script>
+  {% comment %} function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  const csrftoken = getCookie("csrftoken"); {% endcomment %}
+
+  // insert data
+  $("#btnsave").click(function (e) {
+    e.preventDefault();
+    let sid = $('#stuId').val();
+    let name = $("#nameId").val();
+    let email = $("#emailId").val();
+    let password = $("#passwordId").val();
+    if (name == "") console.log("Enter Name Please");
+    else if (email == "") console.log("Enter Email Please");
+    else if (password == "") console.log("Enter Password, Please");
+    else {
+      let output = '';
+      let csrf = $("input[name=csrfmiddlewaretoken]").val();
+      mydata = { name: name, email: email, password: password,sid:sid};
+      $.ajax({
+        url: '{% url "save" %}',
+        method: "POST",
+        data: mydata,
+        headers: { "X-CSRFToken": csrf },
+        //headers: { "X-CSRFToken": csrftoken },
+        success: function (data) {
+          console.log(data);
+          if(data.status){
+              // $("#msg").css({'display':'block'}).text("Form Submitted Successfully").fadeOut(2000);
+              $("#msg").text("Form Submitted Successfully").show(2000);
+              x = data.student_list;
+            for(i=0; i < x.length; i++){
+              output += `
+                <tr>
+                    <td>${x[i].id}</td>
+                    <td>${x[i].name}</td>
+                    <td>${x[i].email}</td>
+                    <td>${x[i].password}</td>
+                    <td>
+                        <input type="button" data-sid="${x[i].id}" class="btn btn-warning btn-sm btn-edt" value="Edit" />
+                        <input type="button" data-sid="${x[i].id}" class="btn btn-danger btn-sm btn-del" value="Delete" />
+                    </td>
+                </tr>
+              `;
+              $('#tb').html(output);
+              $('form')[0].reset();
+              $("#btnsave").text("Save");
+              $("#stuId").val("");
+            }
+          }else {
+            console.log("Error Occured hat");
+          }
+        },
+        error: function (e) {
+          console.log(e);
+          console.log("Error Occured");
+        },
+      });
+    }
+  });
+
+  // Delete Data
+  $('#tb').on("click",".btn-del",function(){
+    let id = $(this).attr("data-sid");
+    let csrf = $("input[name=csrfmiddlewaretoken]").val();
+    let mydata={sid:id};
+    let rowthis = this;
+    $.ajax({
+      url: '{% url "delete" %}',
+      method : "POST",
+      data: mydata,
+      headers: { "X-CSRFToken": csrf },
+      success:function(data){
+        if(data.status){
+          $(rowthis).closest('tr').fadeOut();
+        }else {
+          console.log("Error Occured");
+        }
+      },
+      error:function(e){
+        console.log(e);
+      }
+    });
+  })
+
+  // edit data
+  $('#tb').on("click",".btn-edt",function(){
+    let id = $(this).attr("data-sid");
+    let csrf = $("input[name=csrfmiddlewaretoken]").val();
+    let mydata={sid:id};
+    $.ajax({
+      url: '{% url "edit" %}',
+      method : "POST",
+      data:mydata,
+      headers: { "X-CSRFToken": csrf },
+      success:function(data){
+        $("#stuId").val(data.id);
+        $("#nameId").val(data.name);
+        $("#emailId").val(data.email);
+        $("#passwordId").val(data.password);
+        $("#btnsave").text("Update");
+        // $("#btnsave").attr("id","updatebtn");
+      },
+      error:function(e){
+        console.log(e);
+      }
+    });
+  })
+
+  //update data
+  $('#updatebtn').on("click",function(){
+  });
+</script>

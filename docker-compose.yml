@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  django_app:
+    build: .
+    env_file:
+      - .env
+    command: gunicorn ajaxcrud.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - static_vol:/app/enroll/static
+      - media_vol:/app/enroll/media
+    ports:
+      - "8000:8000"
+
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_vol:/app/enroll/static
+      - media_vol:/app/enroll/media
+    ports:
+      - "80:80"
+    depends_on:
+      - django_app
+
+volumes:
+  static_vol:
+  media_vol:

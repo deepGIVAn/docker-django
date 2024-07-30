@@ -1,0 +1,27 @@
+python3 -m venv venv
+pip install gunicorn
+
+gunicorn ajaxcrud.wsgi-application --bind 0.0.0.0:8000
+
+CMD ['python3','manage.py','runserver','0.0.0.0:8000']
+CMD ['gunicorn','ajaxcrud.wsgi:application','--bind','0.0.0.0:8000']
+
+CMD ["gunicorn", "ajaxcrud.wsgi:application","--bind", "0.0.0.0:8000"]
+
+CMD python manage.py runserver 0.0.0.0:8000
+
+
+https://chatgpt.com/share/4aa91a4d-ad0b-4baa-86ab-ec3fe365d38a
+
+docker build -t myimage .
+docker-compose up --build
+
+docker system prune --all --volumes
+
+Installing git :-
+
+sudo yum update -y
+sudo yum install git -y
+git --version
+
+Install Docker from md file :-

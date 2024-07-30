@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static "enroll/css/bootstrap.css" %}" />
+    <title>CRUD AJAX</title>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center alert alert-danger">CRUD AJAX</h1>
+        <div class="row">
+            <div class="col-sm-4">
+                <h4 class="text-center alert alert-info">
+                    Add/Update Student
+                </h4>
+                <form action="" method="post">{% csrf_token %} 
+                    <input type="hidden" name="id" id="stuId" />
+                    {{form.as_p}}
+                    <button type="submit" class="btn btn-success" id="btnsave">Save</button>
+                </form>
+                <div id="msg" class="alert alert-danger" style="display:none;">
+                     
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <h4 class="text-center alert alert-info">Show Student Information</h4>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Password</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb">
+                        {% if student %}
+                            {% for st in student %}
+                                <tr>
+                                    <td>{{st.id}}</td>
+                                    <td>{{st.name}}</td>
+                                    <td>{{st.email}}</td>
+                                    <td>{{st.password}}</td>
+                                    <td>
+                                        <input type="button" data-sid="{{st.id}}" class="btn btn-warning btn-sm btn-edt" value="Edit" />
+                                        <input type="button" data-sid="{{st.id}}" class="btn btn-danger btn-sm btn-del" value="Delete" />
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static "enroll/js/bootstrap.js" %}"></script>
+    <script src="{% static "enroll/js/jquery-3.7.1.min.js" %}"></script>
+    <script src="{% static "enroll/js/popper.min.js" %}"></script>
+    {% include "enroll/ajax.html" %}
+</body>
+
+</html>
